@@ -1,0 +1,428 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rentora | Django Property Rentals</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Leaflet.js Map Library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'rentals/css/styles.css' %}">
+    <style>
+        .hidden { display: none !important; }
+        .view-section { animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <nav class="navbar glass-effect">
+        <a class="nav-brand" href="#" id="nav-logo-btn" style="display: flex; align-items: center; text-decoration: none;">
+            <div class="logo-container">
+                <img src="{% static 'rentals/images/logo_light.png' %}" alt="Rentora" class="brand-logo logo-light">
+                <img src="{% static 'rentals/images/logo_dark.png' %}" alt="Rentora" class="brand-logo logo-dark">
+            </div>
+        </a>
+        <div class="nav-links">
+            <span class="nav-link active" id="nav-home">Home</span>
+            <span class="nav-link" id="nav-browse">Browse Properties</span>
+            <span class="nav-link" id="nav-bookings">My Bookings</span>
+        </div>
+        <div class="nav-actions">
+            <!-- Theme Toggle -->
+            <button class="icon-btn" id="theme-toggle" title="Switch Theme">
+                <i class="fa-solid fa-moon" id="theme-icon"></i>
+            </button>
+            <a href="{% url 'admin:index' %}" class="btn-primary-custom" target="_blank" style="padding: 0.5rem 1rem; text-decoration: none; font-size: 0.85rem;">
+                <i class="fa-solid fa-lock"></i> Django Admin
+            </a>
+            <button class="btn-primary-custom" id="explore-btn">
+                <i class="fa-solid fa-magnifying-glass"></i> Explore
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Views -->
+    <main>
+        
+        <!-- VIEW 1: HOME / LANDING PAGE -->
+        <section id="view-home" class="view-section">
+            <div class="landing-hero">
+                <div class="ambient-orb ambient-orb-1"></div>
+                <div class="ambient-orb ambient-orb-2"></div>
+                <div class="landing-hero-overlay"></div>
+                <div class="landing-hero-content">
+                    <span class="hero-badge">
+                        <i class="fa-solid fa-gem"></i> Django Full-Stack Powered
+                    </span>
+                    <h1 class="landing-title">Elevate Your Living Experience</h1>
+                    <p class="landing-subtitle">Discover handcrafted rental villas, penthouses, and lofts tailored for high-end luxury and absolute peace of mind. Browse verified spaces with real-time availability check.</p>
+                    <div class="landing-ctas">
+                        <button class="btn-primary-custom" id="landing-cta-primary">
+                            <i class="fa-solid fa-magnifying-glass"></i> Explore Listings
+                        </button>
+                        <button class="btn-secondary-custom" id="landing-cta-secondary">
+                            <i class="fa-solid fa-circle-info"></i> Why Rentora
+                        </button>
+                    </div>
+
+                    <!-- Animated Hero Metrics Bar -->
+                    <div class="hero-stats-bar glass-effect" id="hero-stats-bar">
+                        <div class="stat-item">
+                            <h3 class="stat-number" data-target="250">0</h3>
+                            <span class="stat-label">Verified Estates</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <h3 class="stat-number" data-prefix="₹" data-target="4.8" data-suffix="L">₹0</h3>
+                            <span class="stat-label">Avg Monthly Value</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <h3 class="stat-number" data-target="4.95" data-suffix="★">0</h3>
+                            <span class="stat-label">Guest Rating</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <h3 class="stat-number" data-target="100" data-suffix="%">0</h3>
+                            <span class="stat-label">Direct Verification</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features / Why Choose Us Section -->
+            <div class="features-section" id="benefits-section">
+                <div class="features-header">
+                    <h2>Verified Comfort, Redefined</h2>
+                    <p>We combine exquisite spaces with modern automated services to secure your dream dwelling.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card glass-effect">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3>100% Verified Listings</h3>
+                        <p>Every single property cataloged is manually inspected and audited to match our luxury standards.</p>
+                    </div>
+                    <div class="feature-card glass-effect">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <h3>Django SQLite/Postgres Persistence</h3>
+                        <p>All property data, booking requests, and admin status updates are saved permanently in Django.</p>
+                    </div>
+                    <div class="feature-card glass-effect">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-camera-retro"></i>
+                        </div>
+                        <h3>Premium Architectural Visuals</h3>
+                        <p>Explore interior, kitchen, and exterior views before deciding on your next booking.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- VIEW 2: BROWSE PROPERTIES / CATALOG VIEW -->
+        <section id="view-browse" class="view-section hidden catalog-header-padding">
+            <!-- Search and Filter Panel -->
+            <div class="search-panel glass-effect">
+                <div class="filter-grid">
+                    <div class="filter-group">
+                        <label class="filter-label" for="search-input">Search Location</label>
+                        <input type="text" id="search-input" class="filter-input" placeholder="Search by name, address...">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="city-filter">City</label>
+                        <select id="city-filter" class="filter-input">
+                            <option value="">All Cities</option>
+                            <option value="Kochi">Kochi</option>
+                            <option value="Trivandrum">Trivandrum</option>
+                            <option value="Munnar">Munnar</option>
+                            <option value="Kozhikode">Kozhikode</option>
+                            <option value="Wayanad">Wayanad</option>
+                            <option value="Alappuzha">Alappuzha</option>
+                            <option value="Kumarakom">Kumarakom</option>
+                            <option value="Thrissur">Thrissur</option>
+                            <option value="Kollam">Kollam</option>
+                            <option value="Vagamon">Vagamon</option>
+                            <option value="Palakkad">Palakkad</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="bedrooms-filter">Bedrooms</label>
+                        <select id="bedrooms-filter" class="filter-input">
+                            <option value="">Any Bedrooms</option>
+                            <option value="1">1 Bedroom</option>
+                            <option value="2">2 Bedrooms</option>
+                            <option value="4">4 Bedrooms</option>
+                            <option value="8">8 Bedrooms</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="price-filter">Max Monthly Rent</label>
+                        <select id="price-filter" class="filter-input">
+                            <option value="">No Max Limit</option>
+                            <option value="30000">₹30,000 /mo</option>
+                            <option value="100000">₹1,00,000 /mo</option>
+                            <option value="500000">₹5,00,000 /mo</option>
+                            <option value="1200000">₹12,00,000 /mo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Quick Category Filter Chips -->
+                <div class="category-chips-wrapper">
+                    <div class="chips-label"><i class="fa-solid fa-sliders"></i> Quick Filters:</div>
+                    <div class="chips-scroll" id="category-chips">
+                        <button class="chip-item active" data-category="">All Categories</button>
+                        <button class="chip-item" data-category="Luxury Villa"><i class="fa-solid fa-house-chimney-window"></i> Luxury Villa</button>
+                        <button class="chip-item" data-category="Backwater Estate"><i class="fa-solid fa-water"></i> Backwater Estate</button>
+                        <button class="chip-item" data-category="Hill Retreat"><i class="fa-solid fa-mountain"></i> Hill Retreat</button>
+                        <button class="chip-item" data-category="Heritage Home"><i class="fa-solid fa-landmark"></i> Heritage Home</button>
+                        <button class="chip-item" data-category="Penthouse Suite"><i class="fa-solid fa-building"></i> Penthouse Suite</button>
+                        <button class="chip-item" data-category="Coastal Residence"><i class="fa-solid fa-umbrella-beach"></i> Coastal Residence</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listings Grid & Map Section -->
+            <div class="listings-section" id="listings-section-anchor">
+                <div class="section-header">
+                    <div class="section-title-div">
+                        <h2>Available Spaces</h2>
+                        <p>Explore our highly curated collection of properties</p>
+                    </div>
+                    <div class="section-controls">
+                        <!-- View Toggle -->
+                        <div class="view-toggle-group">
+                            <button class="view-toggle-btn active" id="view-toggle-grid" title="Grid View">
+                                <i class="fa-solid fa-border-all"></i> <span>Grid</span>
+                            </button>
+                            <button class="view-toggle-btn" id="view-toggle-map" title="Interactive Map View">
+                                <i class="fa-solid fa-map-location-dot"></i> <span>Map</span>
+                            </button>
+                        </div>
+                        <!-- Sort Filter -->
+                        <select id="sort-filter" class="sort-select" title="Sort Listings">
+                            <option value="featured">Sort: Featured</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="rating">Rating: High to Low</option>
+                        </select>
+                        <div class="listings-count" id="properties-count">0 properties found</div>
+                    </div>
+                </div>
+
+                <div class="listings-grid" id="listings-grid">
+                    <!-- Cards populated dynamically via app.js & Django API -->
+                </div>
+
+                <!-- Interactive Leaflet Map Container -->
+                <div class="map-view-wrapper hidden" id="map-view-container">
+                    <div id="rentora-map"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: DASHBOARD / MY BOOKINGS VIEW -->
+        <section id="view-bookings" class="view-section hidden">
+            <div class="dashboard-container">
+                <div class="dashboard-title-div">
+                    <h2>My Bookings</h2>
+                    <p>Track status and manage details of your reservation requests.</p>
+                </div>
+
+                <div class="bookings-list" id="bookings-list">
+                    <!-- Booking requests loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Property Detail View Modal -->
+    <div class="modal-backdrop hidden" id="detail-modal">
+        <div class="modal-container detail-modal-container glass-effect">
+            <button class="close-modal-btn" id="close-detail-btn">&times;</button>
+            <div class="detail-layout">
+                <!-- Gallery Carousel -->
+                <div class="gallery-wrapper">
+                    <div class="carousel-viewport" id="carousel-slides-container">
+                        <!-- Dynamic Slides -->
+                    </div>
+                    <button class="carousel-nav-btn prev" id="carousel-prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="carousel-nav-btn next" id="carousel-next-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="gallery-label-badge" id="gallery-image-label">Photo 1 of 3</div>
+                    <div class="carousel-dots" id="carousel-dots-container"></div>
+                </div>
+                
+                <!-- Details Pane -->
+                <div class="detail-content-pane">
+                    <div class="detail-header-block">
+                        <div class="card-location"><i class="fa-solid fa-location-dot"></i> <span id="detail-property-address">Marine Drive Promenade, Kochi</span></div>
+                        <h2 id="detail-property-title">Kochi Heritage Luxury Villa</h2>
+                    </div>
+
+                    <div class="detail-specs-grid">
+                        <div class="detail-spec-box">
+                            <i class="fa-solid fa-bed"></i>
+                            <span class="spec-val" id="detail-spec-beds">4</span>
+                            <span class="spec-lbl">Bedrooms</span>
+                        </div>
+                        <div class="detail-spec-box">
+                            <i class="fa-solid fa-bath"></i>
+                            <span class="spec-val" id="detail-spec-baths">4</span>
+                            <span class="spec-lbl">Bathrooms</span>
+                        </div>
+                        <div class="detail-spec-box">
+                            <i class="fa-solid fa-maximize"></i>
+                            <span class="spec-val" id="detail-spec-area">4,800</span>
+                            <span class="spec-lbl">Sq.Ft Area</span>
+                        </div>
+                        <div class="detail-spec-box">
+                            <i class="fa-solid fa-couch"></i>
+                            <span class="spec-val" id="detail-spec-furnishing">Furnished</span>
+                            <span class="spec-lbl">Furnishing</span>
+                        </div>
+                        <div class="detail-spec-box">
+                            <i class="fa-solid fa-square-parking"></i>
+                            <span class="spec-val" id="detail-spec-parking">Available</span>
+                            <span class="spec-lbl">Parking</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>Overview</h4>
+                        <p id="detail-property-desc">A stunning modern villa located near Marine Drive...</p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>Featured Amenities</h4>
+                        <div class="amenities-chips-grid" id="detail-property-amenities">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="detail-footer-bar">
+                        <div class="detail-price-box">
+                            <span class="price-label">Monthly Rent</span>
+                            <span class="price-amount" id="detail-property-price">₹4,50,000 /mo</span>
+                        </div>
+                        <button class="btn-primary-custom" id="reserve-space-btn">
+                            <i class="fa-solid fa-calendar-check"></i> Reserve Space
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Request Form Modal -->
+    <div class="modal-backdrop hidden" id="booking-modal">
+        <div class="modal-container glass-effect">
+            <div class="modal-header">
+                <h3>Request Property Booking</h3>
+                <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+            </div>
+            
+            <div class="property-summary-box">
+                <div class="summary-details">
+                    <h4 id="summary-property-title">Kochi Heritage Luxury Villa</h4>
+                    <p id="summary-property-address">Marine Drive Promenade, Kochi</p>
+                    <div class="summary-price" id="summary-property-rent">₹4,50,000 /mo</div>
+                </div>
+            </div>
+
+            <form id="booking-form" class="booking-form">
+                <input type="hidden" id="modal-property-id">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="renter-name">Full Name *</label>
+                        <input type="text" id="renter-name" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="renter-email">Email Address *</label>
+                        <input type="email" id="renter-email" required placeholder="john@example.com">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="renter-phone">Phone Number *</label>
+                        <input type="tel" id="renter-phone" required placeholder="+91 98765 43210">
+                    </div>
+                    <div class="form-group">
+                        <label for="guests-count">Number of Guests</label>
+                        <select id="guests-count">
+                            <option value="1">1 Guest</option>
+                            <option value="2">2 Guests</option>
+                            <option value="3">3 Guests</option>
+                            <option value="4">4+ Guests</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="check-in-date">Desired Move-in Date *</label>
+                        <input type="date" id="check-in-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="check-out-date">Lease Duration *</label>
+                        <select id="lease-duration">
+                            <option value="6">6 Months</option>
+                            <option value="12" selected>12 Months (1 Year)</option>
+                            <option value="24">24 Months (2 Years)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="special-requests">Special Requests / Notes</label>
+                    <textarea id="special-requests" rows="3" placeholder="Any specific requirements or questions for the landlord..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-custom" id="cancel-booking-btn">Cancel</button>
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand" style="margin-bottom: 1.25rem; display: flex; justify-content: center; width: 100%;">
+                <div class="logo-container">
+                    <img src="{% static 'rentals/images/logo_light.png' %}" alt="Rentora" class="brand-logo logo-light">
+                    <img src="{% static 'rentals/images/logo_dark.png' %}" alt="Rentora" class="brand-logo logo-dark">
+                </div>
+            </div>
+            <p>Providing verified, premium rental experiences with state-of-the-art architectures.</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem; opacity: 0.7;">© 2026 Rentora Real Estate Technologies. Django Full-Stack Application.</p>
+        </div>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="{% static 'rentals/js/app.js' %}"></script>
+</body>
+</html>
