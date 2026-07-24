@@ -41,25 +41,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewBookings = document.getElementById('view-bookings');
     const viewAnalytics = document.getElementById('view-analytics');
 
-    // Heavy Professional Opening Splash Preloader - Fast Hide
+    // Heavy Professional Opening Splash Preloader
+    // Header remains hidden for guests — only revealed after login
     const openingSplash = document.getElementById('opening-splash');
     const mainNavbar = document.getElementById('main-navbar');
 
-    function dismissSplash() {
-        if (openingSplash) {
-            openingSplash.classList.add('splash-exit');
-            openingSplash.style.pointerEvents = 'none';
-            setTimeout(() => {
-                openingSplash.style.display = 'none';
-                if (openingSplash.parentNode) {
-                    openingSplash.parentNode.removeChild(openingSplash);
-                }
-            }, 400);
-        }
-    }
-
-    setTimeout(dismissSplash, 600);
-    window.addEventListener('load', dismissSplash);
+    setTimeout(() => {
+        if (openingSplash) openingSplash.classList.add('splash-exit');
+        setTimeout(() => {
+            if (openingSplash) openingSplash.style.display = 'none';
+            // Header reveal is deferred to checkUserSession()
+        }, 1200);
+    }, 3000);
 
     // CTAs on Landing page
     const landingCtaPrimary = document.getElementById('landing-cta-primary');
@@ -1462,19 +1455,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, {
-            threshold: 0.05,
-            rootMargin: '0px 0px 50px 0px'
+            threshold: 0.2,
+            rootMargin: '0px 0px -60px 0px'
         });
 
         revealElements.forEach(el => revealObserver.observe(el));
     } else {
         revealElements.forEach(el => el.classList.add('revealed'));
     }
-
-    // Safety fallback: ensure all elements become visible shortly after load
-    setTimeout(() => {
-        revealElements.forEach(el => el.classList.add('revealed'));
-    }, 600);
 
     const storyUnlockBtn = document.getElementById('story-unlock-btn');
     if (storyUnlockBtn && authModal) {

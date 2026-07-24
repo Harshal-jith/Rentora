@@ -24,19 +24,6 @@
             from { opacity: 0; transform: translateY(10px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
-        .opening-splash-overlay {
-            animation: splashAutoFade 1.2s ease forwards;
-        }
-        .opening-splash-overlay.splash-exit {
-            opacity: 0 !important;
-            pointer-events: none !important;
-            visibility: hidden !important;
-            display: none !important;
-        }
-        @keyframes splashAutoFade {
-            0%, 60% { opacity: 1; pointer-events: all; }
-            100% { opacity: 0; pointer-events: none; visibility: hidden; }
-        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
