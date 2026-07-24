@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth.models import User
 
 class Property(models.Model):
     CATEGORY_CHOICES = [
@@ -28,6 +29,7 @@ class Property(models.Model):
     parking = models.BooleanField(default=True)
     available = models.BooleanField(default=True)
     image = models.CharField(max_length=500, help_text="Main image path or URL")
+    image_file = models.ImageField(upload_to='properties/', blank=True, null=True, help_text="Uploaded media file")
     rating = models.FloatField(default=4.8)
     reviews_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -73,6 +75,7 @@ class Booking(models.Model):
     ]
 
     property = models.ForeignKey(Property, related_name='bookings', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='bookings', on_delete=models.SET_NULL, null=True, blank=True)
     renter_name = models.CharField(max_length=150)
     renter_email = models.EmailField()
     renter_phone = models.CharField(max_length=50)
@@ -89,3 +92,17 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking #{self.id} - {self.renter_name} ({self.property.title}) [{self.status}]"
+
+class ActivityLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=255)
+    details = models.TextField(blank=True, null=True)
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        user_str = self.user.username if self.user else "Anonymous"
+        return f"[{self.timestamp.strftime('%Y-%m-%d %H:%M')}] {user_str}: {self.action}"

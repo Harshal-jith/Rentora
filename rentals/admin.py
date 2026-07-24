@@ -1,7 +1,13 @@
 from django.contrib import admin
 from django.core.mail import send_mail
 from django.conf import settings
-from .models import Property, PropertyImage, Amenity, Booking
+from .models import Property, PropertyImage, Amenity, Booking, ActivityLog
+
+@admin.register(ActivityLog)
+class ActivityLogAdmin(admin.ModelAdmin):
+    list_display = ('id', 'timestamp', 'user', 'action', 'details', 'ip_address')
+    list_filter = ('action', 'timestamp')
+    search_fields = ('action', 'details', 'user__username', 'ip_address')
 
 class PropertyImageInline(admin.TabularInline):
     model = PropertyImage

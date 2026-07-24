@@ -130,7 +130,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('SMTP_PORT', 587))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('SMTP_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASS', '')
-DEFAULT_FROM_EMAIL = f"Rentora Concierge <{EMAIL_HOST_USER}>" if EMAIL_HOST_USER else "noreply@rentora.com"
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', os.environ.get('SMTP_USER', ''))
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', os.environ.get('SMTP_PASS', ''))
+DEFAULT_FROM_EMAIL = f"Rentora Concierge <{EMAIL_HOST_USER}>" if EMAIL_HOST_USER else "Rentora Concierge <welcome@rentora.com>"
 

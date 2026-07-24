@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Rentora | Django Property Rentals{% endblock %}</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Leaflet.js Map Library -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'rentals/css/styles.css' %}">
+    <style>
+        .hidden { display: none !important; }
+        .view-section { 
+            opacity: 1; 
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Heavy Professional Opening Splash Preloader -->
+    <div id="opening-splash" class="opening-splash-overlay">
+        <div class="splash-ambient-glow"></div>
+        <div class="splash-content">
+            <div class="splash-logo-container">
+                <img src="{% static 'rentals/images/logo_light.png' %}" alt="Rentora" class="splash-logo logo-light">
+                <img src="{% static 'rentals/images/logo_dark.png' %}" alt="Rentora" class="splash-logo logo-dark">
+            </div>
+            <div class="splash-loader-bar">
+                <div class="splash-loader-progress"></div>
+            </div>
+            <div class="splash-tagline">
+                <span>C</span><span>U</span><span>R</span><span>A</span><span>T</span><span>I</span><span>N</span><span>G</span>
+                <span style="margin-left: 0.4rem; color: var(--accent);">R</span><span>E</span><span>F</span><span>I</span><span>N</span><span>E</span><span>D</span>
+                <span style="margin-left: 0.4rem;">L</span><span>I</span><span>V</span><span>I</span><span>N</span><span>G</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header / Navbar (Initially hidden at start for ultra-clean interface) -->
+    <nav class="navbar glass-effect header-hidden" id="main-navbar">
+        <a class="nav-brand" href="#" id="nav-logo-btn" style="display: flex; align-items: center; text-decoration: none;">
+            <div class="logo-container">
+                <img src="{% static 'rentals/images/logo_light.png' %}" alt="Rentora" class="brand-logo logo-light">
+                <img src="{% static 'rentals/images/logo_dark.png' %}" alt="Rentora" class="brand-logo logo-dark">
+            </div>
+        </a>
+        <div class="nav-links">
+            <span class="nav-link active" id="nav-home">Home</span>
+            <span class="nav-link hidden" id="nav-browse">Browse Properties</span>
+            <span class="nav-link hidden" id="nav-bookings">My Bookings</span>
+            <span class="nav-link hidden" id="nav-analytics">Analytics</span>
+        </div>
+        <div class="nav-actions">
+            <!-- Theme Toggle -->
+            <button class="theme-toggle-btn" id="theme-toggle" title="Switch Theme">
+                <i class="fa-solid fa-moon" id="theme-icon"></i>
+            </button>
+            
+            <!-- Auth Profile / Login Button & Dropdown -->
+            <div id="auth-nav-container" style="position: relative;">
+                <button class="btn-secondary-custom" id="auth-modal-btn" style="height: 42px; padding: 0 1.25rem; display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; border-radius: 12px;">
+                    <i class="fa-solid fa-user"></i> <span id="auth-btn-label">Sign In</span>
+                </button>
+
+                <!-- Profile Dropdown (Shown when logged in) -->
+                <div class="user-dropdown-menu glass-effect hidden" id="user-profile-dropdown" style="position: absolute; top: calc(100% + 0.6rem); right: 0; min-width: 230px; padding: 1rem; border-radius: 16px; box-shadow: var(--card-shadow); z-index: 1000;">
+                    <div style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.75rem;">
+                        <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-primary);" id="dropdown-username">User</div>
+                        <div style="font-size: 0.78rem; color: var(--text-secondary); word-break: break-all;" id="dropdown-email">user@example.com</div>
+                        <div style="margin-top: 0.4rem;"><span id="dropdown-role-badge" class="status-badge" style="font-size: 0.68rem; padding: 0.15rem 0.5rem;">Member</span></div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+                        <button class="dropdown-item-btn" id="dropdown-my-bookings" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.6rem 0.75rem; border: none; background: transparent; color: var(--text-primary); border-radius: 8px; cursor: pointer; text-align: left; font-size: 0.85rem;">
+                            <i class="fa-solid fa-calendar-check" style="color: var(--accent);"></i> My Bookings
+                        </button>
+                        <button class="dropdown-item-btn hidden" id="dropdown-analytics-btn" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.6rem 0.75rem; border: none; background: transparent; color: var(--text-primary); border-radius: 8px; cursor: pointer; text-align: left; font-size: 0.85rem;">
+                            <i class="fa-solid fa-chart-pie" style="color: var(--accent);"></i> Executive Analytics
+                        </button>
+                        <button class="dropdown-item-btn" id="dropdown-logout-btn" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.6rem 0.75rem; border: none; background: rgba(239, 68, 68, 0.1); color: #ef4444; font-weight: 600; border-radius: 8px; cursor: pointer; text-align: left; font-size: 0.85rem; margin-top: 0.25rem;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary-custom" id="explore-btn" style="height: 42px; padding: 0 1.25rem; display: inline-flex; align-items: center; font-size: 0.88rem; border-radius: 12px;">
+                <i class="fa-solid fa-magnifying-glass"></i> Explore
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Block -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- User Auth Modal (Login / Signup) -->
+    <div class="modal-backdrop hidden" id="auth-modal">
+        <div class="modal-container glass-effect" style="max-width: 440px;">
+            <button class="close-modal-btn" id="close-auth-btn">&times;</button>
+            
+            <div class="auth-tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem;">
+                <button class="auth-tab-btn active" id="tab-login-btn" style="flex: 1; padding: 0.75rem; background: none; border: none; font-weight: 700; color: var(--accent); border-bottom: 2px solid var(--accent); cursor: pointer;">Sign In</button>
+                <button class="auth-tab-btn" id="tab-signup-btn" style="flex: 1; padding: 0.75rem; background: none; border: none; font-weight: 700; color: var(--text-secondary); cursor: pointer;">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="booking-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" required placeholder="Your username">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-primary-custom" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                </button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="booking-form hidden">
+                <div class="form-group">
+                    <label for="signup-username">Username</label>
+                    <input type="text" id="signup-username" required placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address</label>
+                    <input type="email" id="signup-email" required placeholder="name@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required placeholder="At least 6 characters">
+                </div>
+                <button type="submit" class="btn-primary-custom" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+                    <i class="fa-solid fa-user-plus"></i> Create Account
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2-Step Verified Cancellation Modal -->
+    <div class="modal-backdrop hidden" id="cancel-modal">
+        <div class="modal-container glass-effect" style="max-width: 460px; padding: 2rem;">
+            <button class="close-modal-btn" id="close-cancel-modal-btn">&times;</button>
+            
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(239, 68, 68, 0.15); color: #ef4444; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 0.75rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h3 style="font-size: 1.35rem;">2-Step Verified Cancellation</h3>
+                <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 0.25rem;">Confirm your intent to cancel reservation <strong id="cancel-modal-booking-id">#0</strong>.</p>
+            </div>
+
+            <!-- Step 1: Summary & Warning -->
+            <div style="background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.2); padding: 1rem; border-radius: 12px; margin-bottom: 1.25rem; font-size: 0.85rem; color: var(--text-primary);">
+                <div style="font-weight: 700; color: #ef4444; margin-bottom: 0.25rem;"><i class="fa-solid fa-circle-info"></i> Cancellation Terms:</div>
+                <p style="color: var(--text-secondary); margin: 0;">Once confirmed, your reservation slot will be released back to the market immediately. A confirmation notice will be sent to your email.</p>
+            </div>
+
+            <!-- Step 2: Verification Code -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="font-weight: 600; font-size: 0.88rem; margin-bottom: 0.4rem; display: block;">
+                    Security Verification Code:
+                </label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div id="cancel-verify-pin-display" style="flex: 1; background: var(--bg-hover); padding: 0.75rem; border-radius: 10px; font-family: monospace; font-size: 1.25rem; font-weight: 800; letter-spacing: 0.2em; text-align: center; color: var(--accent); border: 1px dashed var(--accent);">
+                        849201
+                    </div>
+                    <button type="button" id="refresh-cancel-pin-btn" class="icon-btn" title="Generate New PIN" style="height: 46px; width: 46px;">
+                        <i class="fa-solid fa-arrows-rotate"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="cancel-pin-input" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.35rem; display: block;">
+                    Enter the 6-digit code above to verify:
+                </label>
+                <input type="text" id="cancel-pin-input" placeholder="Type 6-digit code" maxlength="6" style="text-align: center; font-size: 1.1rem; font-family: monospace; font-weight: 700; letter-spacing: 0.15em;">
+                <div id="cancel-pin-error" style="color: #ef4444; font-size: 0.8rem; margin-top: 0.35rem; display: none;">Verification PIN does not match. Please try again.</div>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="button" id="abort-cancel-btn" class="btn-secondary-custom" style="flex: 1; justify-content: center;">
+                    Keep Reservation
+                </button>
+                <button type="button" id="submit-cancel-btn" class="btn-primary-custom" style="flex: 1; justify-content: center; background: #ef4444; border-color: #ef4444;">
+                    <i class="fa-solid fa-ban"></i> Confirm Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand" style="margin-bottom: 1.25rem; display: flex; justify-content: center; width: 100%;">
+                <div class="logo-container">
+                    <img src="{% static 'rentals/images/logo_light.png' %}" alt="Rentora" class="brand-logo logo-light">
+                    <img src="{% static 'rentals/images/logo_dark.png' %}" alt="Rentora" class="brand-logo logo-dark">
+                </div>
+            </div>
+            <p>Providing verified, premium rental experiences with state-of-the-art architectures.</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" class="social-link"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-link"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 0.8rem; opacity: 0.7;">© 2026 Rentora Real Estate Technologies. Django Full-Stack Application.</p>
+        </div>
+    </footer>
+
+    <!-- App JavaScript -->
+    <script src="{% static 'rentals/js/app.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
