@@ -2744,14 +2744,14 @@ footer {
     overflow-x: hidden;
 }
 
-/* ── Ultra-Slow & Cinematic Bi-Directional Pop Reveal Effects ── */
+/* ── Smooth Bi-Directional Pop Reveal Effects ── */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(60px) scale(0.95);
-    filter: blur(12px);
-    transition: opacity 3.8s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 3.8s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 3.8s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(40px) scale(0.96);
+    filter: blur(8px);
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform, filter;
 }
 
@@ -2763,31 +2763,31 @@ footer {
 
 .scroll-reveal-left {
     opacity: 0;
-    transform: translateX(-110px) scale(0.88) rotate(-2.5deg);
-    filter: blur(12px);
-    transition: opacity 4.2s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 4.2s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 4.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(-60px) scale(0.92) rotate(-1.5deg);
+    filter: blur(8px);
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform, filter;
 }
 
 .scroll-reveal-right {
     opacity: 0;
-    transform: translateX(110px) scale(0.88) rotate(2.5deg);
-    filter: blur(12px);
-    transition: opacity 4.2s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 4.2s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 4.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateX(60px) scale(0.92) rotate(1.5deg);
+    filter: blur(8px);
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform, filter;
 }
 
 .scroll-reveal-pop {
     opacity: 0;
-    transform: translateY(55px) scale(0.82);
-    filter: blur(14px);
-    transition: opacity 4.2s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 4.2s cubic-bezier(0.16, 1, 0.3, 1),
-                filter 4.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(35px) scale(0.9);
+    filter: blur(8px);
+    transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: opacity, transform, filter;
 }
 

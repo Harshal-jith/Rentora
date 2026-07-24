@@ -1446,6 +1446,11 @@ document.addEventListener('DOMContentLoaded', () => {
        ============================================================= */
     const revealElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-pop');
 
+    // Immediately reveal hero cover elements on page load
+    document.querySelectorAll('.story-hero-cover .scroll-reveal, .story-hero-cover .scroll-reveal-pop, .story-brand-header').forEach(el => {
+        el.classList.add('revealed');
+    });
+
     if ('IntersectionObserver' in window && revealElements.length) {
         const revealObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -1455,14 +1460,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, {
-            threshold: 0.2,
-            rootMargin: '0px 0px -60px 0px'
+            threshold: 0,
+            rootMargin: '100px 0px 100px 0px'
         });
 
         revealElements.forEach(el => revealObserver.observe(el));
     } else {
         revealElements.forEach(el => el.classList.add('revealed'));
     }
+
+    // Backup safety: reveal any remaining hidden elements after 500ms
+    setTimeout(() => {
+        revealElements.forEach(el => el.classList.add('revealed'));
+    }, 500);
 
     const storyUnlockBtn = document.getElementById('story-unlock-btn');
     if (storyUnlockBtn && authModal) {
