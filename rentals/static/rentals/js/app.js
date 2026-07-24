@@ -41,18 +41,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewBookings = document.getElementById('view-bookings');
     const viewAnalytics = document.getElementById('view-analytics');
 
-    // Heavy Professional Opening Splash Preloader
-    // Header remains hidden for guests — only revealed after login
+    // Heavy Professional Opening Splash Preloader - Fast Hide
     const openingSplash = document.getElementById('opening-splash');
     const mainNavbar = document.getElementById('main-navbar');
 
-    setTimeout(() => {
-        if (openingSplash) openingSplash.classList.add('splash-exit');
-        setTimeout(() => {
-            if (openingSplash) openingSplash.style.display = 'none';
-            // Header reveal is deferred to checkUserSession()
-        }, 1200);
-    }, 3000);
+    function dismissSplash() {
+        if (openingSplash && !openingSplash.classList.contains('splash-exit')) {
+            openingSplash.classList.add('splash-exit');
+            setTimeout(() => {
+                openingSplash.style.display = 'none';
+            }, 500);
+        }
+    }
+
+    setTimeout(dismissSplash, 800);
+    window.addEventListener('load', dismissSplash);
 
     // CTAs on Landing page
     const landingCtaPrimary = document.getElementById('landing-cta-primary');
