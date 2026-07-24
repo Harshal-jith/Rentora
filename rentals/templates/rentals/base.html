@@ -29,6 +29,16 @@
 </head>
 <body>
 
+    <style>
+        #opening-splash {
+            animation: splashAutoDismiss 0.9s ease forwards !important;
+        }
+        @keyframes splashAutoDismiss {
+            0%, 40% { opacity: 1; pointer-events: all; }
+            100% { opacity: 0; pointer-events: none; visibility: hidden; display: none !important; }
+        }
+    </style>
+
     <!-- Heavy Professional Opening Splash Preloader -->
     <div id="opening-splash" class="opening-splash-overlay">
         <div class="splash-ambient-glow"></div>
@@ -47,6 +57,21 @@
             </div>
         </div>
     </div>
+
+    <script>
+        setTimeout(function() {
+            var splashEl = document.getElementById('opening-splash');
+            if (splashEl) {
+                splashEl.style.opacity = '0';
+                splashEl.style.pointerEvents = 'none';
+                setTimeout(function() {
+                    if (splashEl && splashEl.parentNode) {
+                        splashEl.parentNode.removeChild(splashEl);
+                    }
+                }, 300);
+            }
+        }, 500);
+    </script>
 
     <!-- Header / Navbar (Initially hidden at start for ultra-clean interface) -->
     <nav class="navbar glass-effect header-hidden" id="main-navbar">
