@@ -1458,14 +1458,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }, {
-            threshold: 0.2,
-            rootMargin: '0px 0px -60px 0px'
+            threshold: 0.05,
+            rootMargin: '0px 0px 50px 0px'
         });
 
         revealElements.forEach(el => revealObserver.observe(el));
     } else {
         revealElements.forEach(el => el.classList.add('revealed'));
     }
+
+    // Safety fallback: ensure all elements become visible shortly after load
+    setTimeout(() => {
+        revealElements.forEach(el => el.classList.add('revealed'));
+    }, 600);
 
     const storyUnlockBtn = document.getElementById('story-unlock-btn');
     if (storyUnlockBtn && authModal) {
