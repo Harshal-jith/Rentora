@@ -41,18 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewBookings = document.getElementById('view-bookings');
     const viewAnalytics = document.getElementById('view-analytics');
 
-    // Heavy Professional Opening Splash Preloader
-    // Header remains hidden for guests — only revealed after login
-    const openingSplash = document.getElementById('opening-splash');
     const mainNavbar = document.getElementById('main-navbar');
-
-    setTimeout(() => {
-        if (openingSplash) openingSplash.classList.add('splash-exit');
-        setTimeout(() => {
-            if (openingSplash) openingSplash.style.display = 'none';
-            // Header reveal is deferred to checkUserSession()
-        }, 1200);
-    }, 3000);
 
     // CTAs on Landing page
     const landingCtaPrimary = document.getElementById('landing-cta-primary');
