@@ -46,15 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainNavbar = document.getElementById('main-navbar');
 
     function dismissSplash() {
-        if (openingSplash && !openingSplash.classList.contains('splash-exit')) {
+        if (openingSplash) {
             openingSplash.classList.add('splash-exit');
+            openingSplash.style.pointerEvents = 'none';
             setTimeout(() => {
                 openingSplash.style.display = 'none';
-            }, 500);
+                if (openingSplash.parentNode) {
+                    openingSplash.parentNode.removeChild(openingSplash);
+                }
+            }, 400);
         }
     }
 
-    setTimeout(dismissSplash, 800);
+    setTimeout(dismissSplash, 600);
     window.addEventListener('load', dismissSplash);
 
     // CTAs on Landing page
